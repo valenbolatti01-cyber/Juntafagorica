@@ -7,7 +7,7 @@
 
 -Si uno esta desarrollando algo avisar en el grupo para que no se sobrepongan las actualizaciones
 
--Cada que arranquen con algo lo colocan en Trello y luego de finalizar lo pasan a la coluna de "Listo"
+-Cada que arranquen con algo lo colocan en Trello y luego de finalizar lo pasan a la columna de "Listo"
 
 Link de Trello:
 https://trello.com/b/WppDQXay
