@@ -1,7 +1,5 @@
 # Resumen de consigna
 
-Este documento resume la consigna del TPI y la guia de organizacion usada como referencia. No reemplaza a los documentos originales de la catedra.
-
 ## Objetivo
 
 Implementar un simulador que permita observar el ciclo de vida completo de un proceso, desde su ingreso al sistema hasta su finalizacion, combinando:
