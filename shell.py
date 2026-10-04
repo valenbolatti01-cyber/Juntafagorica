@@ -52,3 +52,6 @@ def mostrar_memoria(memoria):
             proceso = "Libre"
 
         print(particion.id_particion, particion.direccion_inicio, particion.tamaño, proceso)
+
+
+print("hola mundo")
