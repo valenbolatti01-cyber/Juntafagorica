@@ -1,3 +1,4 @@
-from shell import inicializar_memoria
+from shell import inicializar_memoria, mostrar_memoria
 
 memoria = inicializar_memoria()
+mostrar_memoria(memoria)

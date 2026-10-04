@@ -35,3 +35,20 @@ def inicializar_memoria():
         ParticionMemoria(1, 100, 450)
     ]
     return memoria
+
+
+def mostrar_memoria(memoria):
+    print("TABLAS DE PARTICIONES")
+    print("" \
+    "==================================\n"
+    "||ID | Inicio | Tamaño | Proceso||\n"
+    "==================================\n"
+    "")
+
+    for particiones in memoria:
+        proceso = particion.id_proceso
+
+        if proceso is None:
+            proceso = "Libre"
+
+        print(particion.id_particion, particion.direccion_inicio, particion.tamaño, proceso)
