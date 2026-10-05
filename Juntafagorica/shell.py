@@ -1,7 +1,7 @@
 class Proceso:
-    def __init__(self, id_proceso, tamaño, tiempo_arribo, tiempo_irrupcion):
+    def __init__(self, id_proceso, tamanio, tiempo_arribo, tiempo_irrupcion):
         self.id_proceso = id_proceso
-        self.tamaño = tamaño
+        self.tamanio = tamanio
         self.tiempo_arribo = tiempo_arribo
         self.tiempo_irrupcion = tiempo_irrupcion
 
@@ -14,10 +14,10 @@ class Proceso:
 
 
 class ParticionMemoria:
-    def __init__(self, id_particion, direccion_inicio, tamaño, id_proceso=None):
+    def __init__(self, id_particion, direccion_inicio, tamanio, id_proceso=None):
         self.id_particion = id_particion
         self.direccion_inicio = direccion_inicio
-        self.tamaño = tamaño
+        self.tamanio = tamanio
         self.id_proceso = id_proceso
 
     def esta_libre(self):
@@ -39,22 +39,40 @@ def inicializar_memoria():
 
 def mostrar_memoria(memoria):
     print("TABLAS DE PARTICIONES")
-    print("" \
+    print(""
     "==================================\n"
-    "||ID | Inicio | Tamaño | Proceso||\n"
+    "||ID | Inicio | Tamanio | Proceso||\n"
     "==================================\n"
     "")
 
-    for particiones in memoria:
+    for particion in memoria:
         proceso = particion.id_proceso
 
         if proceso is None:
             proceso = "Libre"
 
-        print(particion.id_particion, particion.direccion_inicio, particion.tamaño, proceso)
-
-    print("==================================\n")
+        print(particion.id_particion, particion.direccion_inicio, particion.tamanio, proceso)
 
 
-    print("TABLA DE PROCESOS")
-    print("")
+def asignar_memoria(memoria, proceso):
+    for i, particion in enumerate(memoria):
+        for particion in memoria:
+            if particion.esta_libre() and particion.tamanio >= proceso.tamanio:
+
+                sobrante = particion.tamanio - proceso.tamanio
+
+                particion.tamanio = proceso.tamanio
+                particion.id_proceso = proceso.id_proceso                        # Si hay una particion libre suficientemente grande, asignar ahi el proceso
+
+                if sobrante > 0:
+                    nueva_particion = ParticionMemoria(
+                        particion.id_particion + 1,
+                        particion.direccion_inicio + proceso.tamanio,
+                        sobrante
+                    )
+
+                    memoria.insert(i + 1, nueva_particion)
+
+                return True
+
+        return False
