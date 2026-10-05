@@ -62,7 +62,7 @@ def asignar_memoria(memoria, proceso):
                 sobrante = particion.tamanio - proceso.tamanio
 
                 particion.tamanio = proceso.tamanio
-                particion.id_proceso = proceso.id_proceso                        # Si hay una particion libre suficientemente grande, asignar ahi el proceso
+                particion.id_proceso = proceso.id_proceso     # Si hay una particion libre suficientemente grande, asignar ahi el proceso
 
                 if sobrante > 0:
                     nueva_particion = ParticionMemoria(
