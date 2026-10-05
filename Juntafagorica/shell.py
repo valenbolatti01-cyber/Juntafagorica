@@ -71,7 +71,7 @@ def asignar_memoria(memoria, proceso):
                         sobrante
                     )
 
-                    memoria.insert(i + 1, nueva_particion)
+                    memoria.insert(i + 2, nueva_particion)
 
                 return True
 
