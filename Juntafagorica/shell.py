@@ -38,7 +38,7 @@ def inicializar_memoria():
 
 
 def mostrar_memoria(memoria):
-    print("TABLAS DE PARTICIONES")
+    print("---TABLAS DE PARTICIONES---")
     print(""
     "==================================\n"
     "||ID | Inicio | Tamanio | Proceso||\n"
@@ -51,7 +51,7 @@ def mostrar_memoria(memoria):
         if proceso is None:
             proceso = "Libre"
 
-        print(particion.id_particion, particion.direccion_inicio, particion.tamanio, proceso)
+        print("||",particion.id_particion,"|  ", particion.direccion_inicio," |  ", particion.tamanio," | ", proceso,"||")
 
 
 def asignar_memoria(memoria, proceso):
@@ -62,7 +62,7 @@ def asignar_memoria(memoria, proceso):
                 sobrante = particion.tamanio - proceso.tamanio
 
                 particion.tamanio = proceso.tamanio
-                particion.id_proceso = proceso.id_proceso                        # Si hay una particion libre suficientemente grande, asignar ahi el proceso
+                particion.id_proceso = proceso.id_proceso     # Si hay una particion libre suficientemente grande, asignar ahi el proceso
 
                 if sobrante > 0:
                     nueva_particion = ParticionMemoria(
