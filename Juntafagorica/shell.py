@@ -23,8 +23,8 @@ class ParticionMemoria:
     def esta_libre(self):
         return self.id_proceso is None
 
-    def asignar(self):
-        self.id_proceso = self.id_proceso
+    def asignar(self, id_proceso):
+        self.id_proceso = id_proceso
 
     def liberar(self):
         self.id_proceso = None
@@ -56,13 +56,12 @@ def mostrar_memoria(memoria):
 
 def asignar_memoria(memoria, proceso):
     for i, particion in enumerate(memoria):
-        for particion in memoria:
             if particion.esta_libre() and particion.tamanio >= proceso.tamanio:
 
                 sobrante = particion.tamanio - proceso.tamanio
 
                 particion.tamanio = proceso.tamanio
-                particion.id_proceso = proceso.id_proceso     # Si hay una particion libre suficientemente grande, asignar ahi el proceso
+                particion.id_proceso = proceso.id_proceso                     # Si hay una particion libre suficientemente grande, asignar ahi el proceso
 
                 if sobrante > 0:
                     nueva_particion = ParticionMemoria(
@@ -71,8 +70,19 @@ def asignar_memoria(memoria, proceso):
                         sobrante
                     )
 
-                    memoria.insert(i + 2, nueva_particion)
+                    memoria.insert(i + 1, nueva_particion)
 
-                return True
+            return True
 
-        return False
+    return False
+
+def liberar_memoria(memoria, id_proceso):
+    for particion in memoria:
+        if particion.id_proceso == id_proceso:
+            particion.liberar()
+            return True
+
+    return False
+
+
+print ("fran gay")
