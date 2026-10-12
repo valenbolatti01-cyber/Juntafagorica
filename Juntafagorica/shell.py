@@ -37,52 +37,87 @@ def inicializar_memoria():
     return memoria
 
 
+def renumerar_particiones(memoria):
+    for numero, particion in enumerate(memoria, start=1):
+        particion.id_particion = numero
+
+
 def mostrar_memoria(memoria):
-    print("---TABLAS DE PARTICIONES---")
-    print(""
-    "==================================\n"
-    "||ID | Inicio | Tamanio | Proceso||\n"
-    "==================================\n"
-    "")
+    columnas = ["ID", "Inicio", "Tamaño", "Proceso", "Frag. interna"]
 
+    filas = []
     for particion in memoria:
-        proceso = particion.id_proceso
+        proceso = particion.id_proceso if particion.id_proceso is not None else "Libre"
+        filas.append([particion.id_particion, particion.direccion_inicio,
+                      particion.tamanio, proceso, 0])
 
-        if proceso is None:
-            proceso = "Libre"
+    # Ancho de cada columna = lo más largo entre el título y sus valores
+    anchos = []
+    for i, titulo in enumerate(columnas):
+        anchos.append(max([len(titulo)] + [len(str(fila[i])) for fila in filas]))
 
-        print("||",particion.id_particion,"|  ", particion.direccion_inicio," |  ", particion.tamanio," | ", proceso,"||")
+    separador = "+" + "+".join("-" * (ancho + 2) for ancho in anchos) + "+"
+
+    def armar_fila(valores):
+        celdas = [str(valor).center(ancho) for valor, ancho in zip(valores, anchos)]
+        return "| " + " | ".join(celdas) + " |"
+
+    print("--- TABLA DE PARTICIONES ---")
+    print(separador)
+    print(armar_fila(columnas))
+    print(separador)
+    for fila in filas:
+        print(armar_fila(fila))
+    print(separador)
 
 
 def asignar_memoria(memoria, proceso):
-    for i, particion in enumerate(memoria):
-            if particion.esta_libre() and particion.tamanio >= proceso.tamanio:
+    # Best-Fit: la partición libre más chica en la que entra el proceso
+    mejor = None
+    for particion in memoria:
+        if particion.esta_libre() and particion.tamanio >= proceso.tamanio:
+            if mejor is None or particion.tamanio < mejor.tamanio:
+                mejor = particion
 
-                sobrante = particion.tamanio - proceso.tamanio
+    if mejor is None:
+        return False  # no hay lugar: el proceso queda Listo y Suspendido
 
-                particion.tamanio = proceso.tamanio
-                particion.id_proceso = proceso.id_proceso                     # Si hay una particion libre suficientemente grande, asignar ahi el proceso
+    indice = memoria.index(mejor)
+    sobrante = mejor.tamanio - proceso.tamanio
 
-                if sobrante > 0:
-                    nueva_particion = ParticionMemoria(
-                        particion.id_particion + 1,
-                        particion.direccion_inicio + proceso.tamanio,
-                        sobrante
-                    )
+    mejor.tamanio = proceso.tamanio
+    mejor.asignar(proceso.id_proceso)
 
-                    memoria.insert(i + 1, nueva_particion)
+    if sobrante > 0:
+        nueva_particion = ParticionMemoria(
+            0,
+            mejor.direccion_inicio + proceso.tamanio,
+            sobrante
+        )
+        memoria.insert(indice + 1, nueva_particion)
 
-            return True
+    renumerar_particiones(memoria)
+    return True
 
-    return False
 
 def liberar_memoria(memoria, id_proceso):
     for particion in memoria:
         if particion.id_proceso == id_proceso:
             particion.liberar()
-            return True
+            break
+    else:
+        return False
 
-    return False
+    # Unir particiones libres contiguas
+    i = 0
+    while i < len(memoria) - 1:
+        actual = memoria[i]
+        siguiente = memoria[i + 1]
+        if actual.esta_libre() and siguiente.esta_libre():
+            actual.tamanio += siguiente.tamanio
+            memoria.pop(i + 1)
+        else:
+            i += 1
 
-
-print ("fran gay")
+    renumerar_particiones(memoria)
+    return True
