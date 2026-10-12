@@ -1,3 +1,6 @@
+import csv
+
+
 class Proceso:
     def __init__(self, id_proceso, tamanio, tiempo_arribo, tiempo_irrupcion):
         self.id_proceso = id_proceso
@@ -11,6 +14,42 @@ class Proceso:
         self.tiempo_finalizacion = None
         self.tiempo_espera = 0
         self.tiempo_retorno = 0
+
+
+def cargar_procesos(ruta_archivo):
+    procesos = []
+    ids = set()
+
+    with open(ruta_archivo, newline="", encoding="utf-8-sig") as archivo:
+        lector = csv.DictReader(archivo)
+
+        columnas = {"id", "tamanio", "arribo", "irrupcion"}
+        if lector.fieldnames is None or not columnas.issubset(lector.fieldnames):
+            raise ValueError("El CSV debe tener: id,tamanio,arribo,irrupcion")
+
+        for numero_fila, fila in enumerate(lector, start=2):
+            try:
+                id_proceso = fila["id"].strip()
+                tamanio = int(fila["tamanio"])
+                arribo = int(fila["arribo"])
+                irrupcion = int(fila["irrupcion"])
+            except (ValueError, TypeError, AttributeError) as error:
+                raise ValueError(
+                    f"Datos invalidos en la fila {numero_fila}"
+                ) from error
+
+            if not id_proceso or id_proceso in ids:
+                raise ValueError(f"ID vacio o repetido en la fila {numero_fila}")
+            if not 0 < tamanio <= 450 or arribo < 0 or irrupcion <= 0:
+                raise ValueError(f"Valores fuera de rango en la fila {numero_fila}")
+
+            ids.add(id_proceso)
+            procesos.append(Proceso(id_proceso, tamanio, arribo, irrupcion))
+
+            if len(procesos) > 10:
+                raise ValueError("El archivo no puede contener mas de 10 procesos")
+
+    return procesos
 
 
 class ParticionMemoria:
@@ -43,7 +82,7 @@ def renumerar_particiones(memoria):
 
 
 def mostrar_memoria(memoria):
-    columnas = ["ID", "Inicio", "Tamaño", "Proceso", "Frag. Externa"]
+    columnas = ["ID", "Inicio", "Tamano", "Proceso", "Frag. Externa"]
 
     filas = []
     for particion in memoria:
