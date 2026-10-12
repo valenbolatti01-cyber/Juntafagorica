@@ -43,7 +43,7 @@ def renumerar_particiones(memoria):
 
 
 def mostrar_memoria(memoria):
-    columnas = ["ID", "Inicio", "Tamaño", "Proceso", "Frag. interna"]
+    columnas = ["ID", "Inicio", "Tamaño", "Proceso", "Frag. Externa"]
 
     filas = []
     for particion in memoria:
@@ -62,7 +62,7 @@ def mostrar_memoria(memoria):
         celdas = [str(valor).center(ancho) for valor, ancho in zip(valores, anchos)]
         return "| " + " | ".join(celdas) + " |"
 
-    print("--- TABLA DE PARTICIONES ---")
+    print("--- Tabla De Particiones ---")
     print(separador)
     print(armar_fila(columnas))
     print(separador)

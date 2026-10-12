@@ -14,5 +14,5 @@ liberar_memoria(memoria, "P1")
 liberar_memoria(memoria, "P2")
 mostrar_memoria(memoria)      # un solo Libre 450 @100 (huecos unidos)
 
-print(asignar_memoria(memoria, p3))  # True
+asignar_memoria(memoria, p3)  # True
 mostrar_memoria(memoria)      # P3 @100, Libre 410 @140
