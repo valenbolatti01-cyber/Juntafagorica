@@ -82,7 +82,7 @@ def renumerar_particiones(memoria):
 
 
 def mostrar_memoria(memoria):
-    columnas = ["ID", "Inicio", "Tamano", "Proceso", "Frag. Externa"]
+    columnas = ["ID", "Inicio", "Tamano", "Proceso", "Frag. Interna"]
 
     filas = []
     for particion in memoria:
@@ -160,3 +160,22 @@ def liberar_memoria(memoria, id_proceso):
 
     renumerar_particiones(memoria)
     return True
+
+def seleccionar_srtf(procesos):
+    candidatos = [
+        proceso
+        for proceso in procesos
+        if proceso.estado in ("Listo", "Ejecucion")
+    ]
+
+    if not candidatos:
+        return None
+
+    return min(
+        candidatos,
+        key=lambda proceso: (
+            proceso.tiempo_restante,
+            proceso.tiempo_arribo,
+            proceso.id_proceso
+        )
+    )
