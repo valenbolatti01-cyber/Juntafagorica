@@ -1,0 +1,432 @@
+/* Estilos generales */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #eef1f5;
+    color: #1f2937;
+}
+
+header {
+    background: #17212b;
+    color: white;
+    text-align: center;
+    padding: 35px 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+header p {
+    margin: 8px 0 0;
+    opacity: .8;
+}
+
+main {
+    width: 95%;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+
+/* Contenedor principal */
+
+.lineatemp {
+    background: white;
+    border-radius: 14px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+.lineatemp h2 {
+    margin-top: 0;
+}
+
+
+/* Línea temporal */
+
+#timeline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 20px 5px;
+}
+
+#timeline input[type="radio"] {
+    display: none;
+}
+
+#timeline label {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 65px;
+    height: 40px;
+    padding: 8px 15px;
+    background: #e5e7eb;
+    color: #374151;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all .2s ease;
+}
+
+#timeline label:hover {
+    background: #d1d5db;
+    transform: translateY(-2px);
+}
+
+#timeline input[type="radio"]:checked + label {
+    background: #2563eb;
+    color: white;
+    transform: scale(1.08);
+    box-shadow: 0 4px 10px rgba(37,99,235,.3);
+}
+
+
+/* Estados de cada instante */
+
+.estado-evento {
+    display: none;
+    padding-top: 15px;
+}
+
+
+/* Información del instante */
+
+.cont-instante {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.instante-tiempo,
+.instante-evento {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 15px 20px;
+}
+
+.instante-tiempo span,
+.instante-evento span {
+    display: block;
+    font-size: 11px;
+    font-weight: bold;
+    color: #6b7280;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.instante-tiempo strong {
+    font-size: 28px;
+    color: #2563eb;
+}
+
+.instante-evento strong {
+    font-size: 16px;
+    color: #1f2937;
+}
+
+
+/* Memoria y CPU */
+
+.estado-principal {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.panel {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.panel h2 {
+    font-size: 18px;
+    margin-top: 0;
+}
+
+
+/* Representación de la memoria */
+
+.memoria {
+    width: 100%;
+    min-height: 110px;
+    display: flex;
+    border: 2px solid #1f2937;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f3f4f6;
+}
+
+.bloque-memoria {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-right: 1px solid white;
+    text-align: center;
+    overflow: hidden;
+}
+
+.bloque-memoria:last-child {
+    border-right: none;
+}
+
+.bloque-memoria strong {
+    font-size: 18px;
+}
+
+.bloque-memoria span {
+    margin-top: 6px;
+    font-size: 14px;
+}
+
+/* Colores de cada espacio de memoria */
+
+.bloque-memoria.bloque-so {
+    background-color: #7c3aed !important;
+    color: white;
+}
+
+.bloque-memoria.bloque-proceso {
+    background-color: #2563eb !important;
+    color: white;
+}
+
+.bloque-memoria.bloque-libre {
+    background-color: #d1d5db !important;
+    color: #374151;
+}
+
+
+/* Panel de la CPU */
+
+.bloque-cpu {
+    min-height: 170px;
+    border-radius: 12px;
+    background: #f3f4f6;
+    border: 2px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.cpu-icon {
+    font-size: 35px;
+    margin-bottom: 10px;
+}
+
+.cpu-proceso span {
+    display: block;
+    font-size: 11px;
+    font-weight: bold;
+    color: #6b7280;
+    letter-spacing: 1px;
+}
+
+.cpu-proceso strong {
+    display: block;
+    margin-top: 6px;
+    font-size: 30px;
+    color: #2563eb;
+}
+
+
+/* Colas de procesos */
+
+.colas {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.cola-indv {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    min-height: 120px;
+}
+
+.cola-indv h3 {
+    margin: 0 0 12px;
+    font-size: 13px;
+    color: #374151;
+    letter-spacing: .5px;
+}
+
+.procesos-cola {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.parte-proceso {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 34px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.parte-proceso.suspendido {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.parte-proceso.nuevo {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.parte-proceso.terminado {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.cola-vacia {
+    color: #9ca3af;
+    font-size: 13px;
+    font-style: italic;
+}
+
+
+/* Estadísticas finales */
+
+.estadisticas {
+    background: white;
+    border-radius: 14px;
+    padding: 25px;
+    margin-top: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+.estadisticas h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.resumen-estadisticas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.bloque-estadistica {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+
+.bloque-estadistica span {
+    display: block;
+    font-size: 11px;
+    font-weight: bold;
+    color: #6b7280;
+    letter-spacing: .5px;
+}
+
+.bloque-estadistica strong {
+    display: block;
+    font-size: 26px;
+    color: #2563eb;
+    margin-top: 8px;
+}
+
+/* Tabla con los resultados de cada proceso */
+
+.tabla-estadisticas {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabla-estadisticas table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.tabla-estadisticas th {
+    background: #17212b;
+    color: white;
+    padding: 13px 10px;
+    font-size: 13px;
+}
+
+.tabla-estadisticas td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
+}
+
+.tabla-estadisticas tbody tr:hover {
+    background: #f3f4f6;
+}
+
+.tabla-estadisticas tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* Para que también se vea bien en pantallas más chicas */
+
+@media (max-width: 850px) {
+    .estado-principal {
+        grid-template-columns: 1fr;
+    }
+
+    .colas {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cont-instante {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 550px) {
+    .colas {
+        grid-template-columns: 1fr;
+    }
+
+    .resumen-estadisticas {
+        grid-template-columns: 1fr;
+    }
+
+    header h1 {
+        font-size: 25px;
+    }
+
+    .lineatemp {
+        padding: 15px;
+    }
+}
