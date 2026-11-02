@@ -217,6 +217,10 @@ main {
 /* Bloque del Sistema Operativo (100K) al comienzo de la memoria.
    Se dibuja con CSS: "SO" arriba y el tamaño debajo. */
 
+.memoria {
+    position: relative; /* Fundamental para que el ::after no se escape de la barra */
+}
+
 .memoria::before {
     content: "SO";
     order: 1;
@@ -224,7 +228,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 10px 32px;
+    padding: 10px 10px 32px; /*El 32px empuja el "SO" un poco hacia arriba*/
     background-color: #7c3aed;
     border-left: 1px solid white;
     color: white;
@@ -238,12 +242,12 @@ main {
     position: absolute;
     top: 0;
     bottom: 0;
-    right: 0;
+    right: 1.5%; /* En 0 coincide exactamente con el bloque de 18.1818% del ::before */
     width: 18.1818%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-top: 54px;
+    padding-top: 28px; /* Empuja el "100K" justo debajo del "SO" */
     color: white;
     font-size: 14px;
     pointer-events: none;
