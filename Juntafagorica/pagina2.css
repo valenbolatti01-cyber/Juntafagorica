@@ -217,6 +217,38 @@ main {
 
 /* Panel de la CPU */
 
+.memoria::before {
+    content: "SO";
+    order: 1;
+    flex: 0 0 18.1818%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 10px 32px;
+    background-color: #7c3aed;
+    border-left: 1px solid white;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.memoria::after {
+    content: "100K";
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 18.1818%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 54px;
+    color: white;
+    font-size: 14px;
+    pointer-events: none;
+}
+
 .bloque-cpu {
     min-height: 170px;
     border-radius: 12px;
