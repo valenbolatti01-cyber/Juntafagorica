@@ -214,8 +214,8 @@ main {
     color: #374151;
 }
 
-
-/* Panel de la CPU */
+/* Bloque del Sistema Operativo (100K) al comienzo de la memoria.
+   Se dibuja con CSS: "SO" arriba y el tamaño debajo. */
 
 .memoria::before {
     content: "SO";
@@ -248,6 +248,8 @@ main {
     font-size: 14px;
     pointer-events: none;
 }
+
+/* Panel de la CPU */
 
 .bloque-cpu {
     min-height: 170px;
