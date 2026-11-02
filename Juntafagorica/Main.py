@@ -1,3 +1,5 @@
+import copy
+import csv
 import html
 import webbrowser
 from pathlib import Path
@@ -414,38 +416,117 @@ def simular(procesos):
     return procesos, tiempo, eventos
 
 
-if __name__ == "__main__":
-    ruta_csv = Path(__file__).with_name("procesos.csv")
-    procesos = cargar_procesos(ruta_csv)
+# VERIFICAR PORQUE SOLUCIONA PROBLEMAS QUE NO SABIAMOS QUE TENIAMOS
+
+def seleccionar_archivo():
+    """Abre el explorador de archivos y devuelve la ruta elegida (o None)."""
+    import tkinter as tk
+    from tkinter import filedialog
+
+    ventana = tk.Tk()
+    ventana.withdraw()
+    ventana.attributes("-topmost", True)
+
+    ruta = filedialog.askopenfilename(
+        title="Seleccionar archivo de procesos",
+        initialdir=str(Path(__file__).parent),
+        filetypes=[
+            ("Archivos CSV", "*.csv"),
+            ("Todos los archivos", "*.*"),
+        ],
+    )
+
+    ventana.destroy()
+    return Path(ruta) if ruta else None
+
+
+def cargar_archivo():
+    """Opcion 1. Devuelve (ruta, procesos) o None si no se pudo cargar."""
+    ruta = seleccionar_archivo()
+
+    if ruta is None:
+        print("\nNo se selecciono ningun archivo.")
+        return None
+
+    try:
+        procesos = cargar_procesos(ruta)
+    except (OSError, ValueError, csv.Error) as error:
+        print(f"\nArchivo invalido ({ruta.name}): {error}")
+        return None
 
     if not procesos:
-        raise ValueError("El CSV debe incluir al menos un proceso.")
-
-    procesos, tiempo_total, eventos = simular(procesos)
-
-    print("\nEstadisticas finales")
-    print("ID | Arribo | Irrupcion | Finalizacion | Retorno | Espera")
-
-    for proceso in sorted(procesos, key=lambda p: p.id_proceso):
         print(
-            f"{proceso.id_proceso} | "
-            f"{proceso.tiempo_arribo} | "
-            f"{proceso.tiempo_irrupcion} | "
-            f"{proceso.tiempo_finalizacion} | "
-            f"{proceso.tiempo_retorno} | "
-            f"{proceso.tiempo_espera}"
+            f"\nArchivo invalido ({ruta.name}): "
+            "el CSV debe incluir al menos un proceso."
         )
+        return None
 
-    promedio_retorno = (
-        sum(p.tiempo_retorno for p in procesos) / len(procesos)
-    )
-    promedio_espera = (
-        sum(p.tiempo_espera for p in procesos) / len(procesos)
-    )
-    rendimiento = len(procesos) / tiempo_total if tiempo_total else 0
+    print(f"\nArchivo cargado: {ruta.name} ({len(procesos)} procesos)")
+    return ruta, procesos
 
-    print(f"Promedio de retorno: {promedio_retorno:.2f}")
-    print(f"Promedio de espera: {promedio_espera:.2f}")
-    print(f"Rendimiento: {rendimiento:.4f} procesos por unidad de tiempo")
+
+def ejecutar_por_consola(procesos):
+    # TODO (otro miembro del equipo): implementar la ejecucion por consola.
+    # Recibe una copia de la lista de procesos cargados, asi que se puede
+    # modificar sin afectar a la lista original del menu.
+    print("\nLa ejecucion por consola todavia no esta implementada.")
+
+
+def generar_visualizador(procesos):
+    # La simulacion modifica los procesos, por eso se usa una copia.
+    procesos, tiempo_total, eventos = simular(copy.deepcopy(procesos))
     ruta_html = generar_html(eventos, procesos, tiempo_total)
     webbrowser.open(ruta_html.as_uri())
+
+
+def mostrar_menu(nombre_archivo):
+    print("\n=== Simulador MVT + SRTF ===")
+    print(f"Archivo cargado: {nombre_archivo or 'ninguno'}")
+    print("1. Cargar archivo")
+    print("2. Ejecutar por consola")
+    print("3. Generar el html")
+    print("4. Salir")
+
+
+def menu():
+    procesos = None
+    nombre_archivo = None
+
+    while True:
+        mostrar_menu(nombre_archivo)
+        opcion = input("Elegi una opcion: ").strip()
+
+        if opcion == "1":
+            resultado = cargar_archivo()
+
+            if resultado is not None:
+                ruta, procesos = resultado
+                nombre_archivo = ruta.name
+
+        elif opcion in ("2", "3"):
+            if procesos is None:
+                print(
+                    "\nNo hay un archivo cargado. "
+                    "Primero usa la opcion 1 (Cargar archivo)."
+                )
+                continue
+
+            if opcion == "2":
+                ejecutar_por_consola(copy.deepcopy(procesos))
+            else:
+                try:
+                    generar_visualizador(procesos)
+                except RuntimeError as error:
+                    print(f"\nError: {error}")
+
+        elif opcion == "4":
+            print("Hasta luego.")
+            break
+
+        else:
+            print("Opcion invalida. Elegi un numero del 1 al 4.")
+
+
+if __name__ == "__main__":
+    menu()
+    
