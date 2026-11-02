@@ -46,27 +46,35 @@ def admitir_procesos(memoria, procesos, tiempo):
             proceso.estado = "Listo y Suspendido"
 
 
-def mostrar_estado(memoria, procesos, tiempo, motivo, ejecutando):
-    print(f"\nTiempo {tiempo} - {motivo}")
-    print(f"CPU: {ejecutando.id_proceso if ejecutando else 'Libre'}")
+def mostrar_evento_consola(evento):
+    print(f"\nTiempo {evento['tiempo']} - {evento['descripcion']}")
+    print(f"Ejecucion: {evento['cpu']}")
+    print(f"Nuevos: {', '.join(evento['nuevos']) or '-'}")
+    print(f"Listos: {', '.join(evento['listos']) or '-'}")
+    print(f"Listos y suspendidos: {', '.join(evento['suspendidos']) or '-'}")
+    print(f"Terminados: {', '.join(evento['terminados']) or '-'}")
 
-    for estado in (
-        "Nuevo",
-        "Listo",
-        "Listo y Suspendido",
-        "Ejecucion",
-        "Terminado",
-    ):
-        ids = [
-            proceso.id_proceso
-            for proceso in procesos
-            if proceso.estado == estado
+    filas_memoria = [
+        [
+            particion["id"],
+            particion["inicio"],
+            particion["tamano"],
+            particion["proceso"] or "Libre",
+            particion["fragmentacion"],
         ]
-        print(f"{estado}: {', '.join(ids) if ids else '-'}")
+        for particion in evento["memoria"]
+    ]
 
-    mostrar_memoria(memoria)
+    imprimir_tabla(
+        "Particiones de memoria",
+        ["ID", "Inicio", "Tamano", "Proceso", "Frag. Externa"],
+        filas_memoria,
+    )
 
-def registrar_evento(memoria, procesos, tiempo, motivo, ejecutando, eventos):
+
+def registrar_evento(
+    memoria, procesos, tiempo, motivo, ejecutando, eventos, paso_a_paso=False
+):
     evento = {
         "tiempo": tiempo,
         "descripcion": motivo,
@@ -102,6 +110,15 @@ def registrar_evento(memoria, procesos, tiempo, motivo, ejecutando, eventos):
     }
 
     eventos.append(evento)
+
+    if paso_a_paso:
+        if len(eventos) > 1:
+            input(
+                f"\nPresiona Enter para avanzar al siguiente cambio "
+                f"(tiempo {evento['tiempo']})..."
+            )
+
+        mostrar_evento_consola(evento)
 
 
 def generar_memoria_html(memoria):
@@ -300,7 +317,7 @@ def generar_html(eventos, procesos, tiempo_total):
     return salida
 
 
-def simular(procesos):
+def simular(procesos, paso_a_paso=False):
     memoria = inicializar_memoria()
     eventos = []
     procesos.sort(key=lambda p: (p.tiempo_arribo, p.id_proceso))
@@ -351,20 +368,14 @@ def simular(procesos):
 
         if llegadas:
             ids = ", ".join(p.id_proceso for p in llegadas)
-            mostrar_estado(
-                memoria,
-                procesos,
-                tiempo,
-                f"Arribo de proceso(s): {ids}",
-                ejecutando,
-            )
             registrar_evento(
                 memoria,
                 procesos,
                 tiempo,
                 f"Arribo de proceso(s): {ids}",
                 ejecutando,
-                eventos
+                eventos,
+                paso_a_paso,
             )
 
         # Ejecutar una unidad de tiempo y volver a evaluar SRTF.
@@ -394,6 +405,7 @@ def simular(procesos):
                 f"Finalización de {finalizado.id_proceso}",
                 None,
                 eventos,
+                paso_a_paso,
             )
 
             # Seleccionar al siguiente proceso.
@@ -408,9 +420,10 @@ def simular(procesos):
                     memoria,
                     procesos,
                     tiempo,
-                    f"Comienza ejecución de {siguiente.id_proceso}",
+                    f"Arribo de proceso(s): {ids}",
                     ejecutando,
                     eventos,
+                    paso_a_paso,
                 )
 
     return procesos, tiempo, eventos
@@ -465,11 +478,96 @@ def cargar_archivo():
     return ruta, procesos
 
 
+def imprimir_tabla(titulo, columnas, filas):
+    anchos = []
+
+    for indice, columna in enumerate(columnas):
+        ancho = max(
+            len(str(columna)),
+            *(len(str(fila[indice])) for fila in filas)
+        )
+        anchos.append(ancho)
+
+    separador = "+" + "+".join(
+        "-" * (ancho + 2) for ancho in anchos
+    ) + "+"
+
+    def formar_fila(valores):
+        celdas = [
+            str(valor).center(ancho)
+            for valor, ancho in zip(valores, anchos)
+        ]
+        return "| " + " | ".join(celdas) + " |"
+
+    print(f"\n{titulo}")
+    print(separador)
+    print(formar_fila(columnas))
+    print(separador)
+
+    for fila in filas:
+        print(formar_fila(fila))
+
+    print(separador)
+
+
 def ejecutar_por_consola(procesos):
-    # TODO (otro miembro del equipo): implementar la ejecucion por consola.
-    # Recibe una copia de la lista de procesos cargados, asi que se puede
-    # modificar sin afectar a la lista original del menu.
-    print("\nLa ejecucion por consola todavia no esta implementada.")
+    """Ejecuta la simulacion y muestra eventos, memoria y estadisticas."""
+    try:
+        procesos, tiempo_total, eventos = simular(
+            procesos,
+            paso_a_paso=True,
+        )
+    except RuntimeError as error:
+        print(f"\nNo se pudo completar la simulacion: {error}")
+        return
+
+    if not procesos:
+        print("\nNo hay procesos para simular.")
+        return
+
+    cantidad = len(procesos)
+    promedio_retorno = sum(
+        proceso.tiempo_retorno for proceso in procesos
+    ) / cantidad
+    promedio_espera = sum(
+        proceso.tiempo_espera for proceso in procesos
+    ) / cantidad
+    rendimiento = cantidad / tiempo_total if tiempo_total else 0
+
+    filas_procesos = []
+
+    for proceso in sorted(procesos, key=lambda p: p.id_proceso):
+        filas_procesos.append([
+            proceso.id_proceso,
+            proceso.tiempo_arribo,
+            proceso.tiempo_irrupcion,
+            proceso.tiempo_finalizacion,
+            proceso.tiempo_retorno,
+            proceso.tiempo_espera,
+        ])
+
+    imprimir_tabla(
+        "Estadisticas por proceso",
+        [
+            "ID",
+            "Arribo",
+            "Irrupcion",
+            "Finalizacion",
+            "Retorno",
+            "Espera",
+        ],
+        filas_procesos,
+    )
+
+    imprimir_tabla(
+        "Resumen del sistema",
+        ["Estadistica", "Valor"],
+        [
+            ["Promedio de retorno", f"{promedio_retorno:.2f}"],
+            ["Promedio de espera", f"{promedio_espera:.2f}"],
+            ["Rendimiento", f"{rendimiento:.4f} procesos/unidad"],
+        ],
+    )
 
 
 def generar_visualizador(procesos):
@@ -529,4 +627,3 @@ def menu():
 
 if __name__ == "__main__":
     menu()
-    
