@@ -228,7 +228,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 10px 32px; /*El 32px empuja el "SO" un poco hacia arriba*/
+    padding: 10px 10px 32px; 
     background-color: #7c3aed;
     border-left: 1px solid white;
     color: white;
@@ -242,16 +242,58 @@ main {
     position: absolute;
     top: 0;
     bottom: 0;
-    right: 1.5%; /* En 0 coincide exactamente con el bloque de 18.1818% del ::before */
+    right: 1.5%; 
     width: 18.1818%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-top: 28px; /* Empuja el "100K" justo debajo del "SO" */
+    padding-top: 28px; 
     color: white;
     font-size: 14px;
     pointer-events: none;
 }
+
+/* Botón "Siguiente" (debajo de la barra de memoria, a la derecha) */
+
+.controles-memoria {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.btn-siguiente {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    background: #2563eb;
+    color: white;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 4px 10px rgba(37,99,235,.3);
+    transition: all .2s ease;
+}
+
+.btn-siguiente:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+.btn-siguiente:active {
+    transform: translateY(0);
+}
+
+.btn-siguiente.deshabilitado {
+    background: #d1d5db;
+    color: #6b7280;
+    box-shadow: none;
+    cursor: default;
+    transform: none;
+}
+
 
 /* Panel de la CPU */
 

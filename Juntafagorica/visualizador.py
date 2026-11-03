@@ -1,4 +1,3 @@
-
 from pathlib import Path
 import html
 
@@ -81,6 +80,14 @@ def generar_html(eventos, procesos, tiempo_total):
         '''
 
         memoria = generar_memoria_html(evento["memoria"])
+
+        # Botón "Siguiente"
+        if i < len(eventos) - 1:
+            boton = (f'<label class="btn-siguiente" for="evento{i + 1}">'
+                     f'Siguiente &#9654;</label>')
+        else:
+            boton = '<span class="btn-siguiente deshabilitado">Fin &#9632;</span>'
+
         colas = generar_colas_html(evento)
 
         estados += f'''
@@ -100,6 +107,7 @@ def generar_html(eventos, procesos, tiempo_total):
                     <div class="panel">
                         <h2>Memoria</h2>
                         <div class="memoria">{memoria}</div>
+                        <div class="controles-memoria">{boton}</div>
                     </div>
 
                     <div class="panel">

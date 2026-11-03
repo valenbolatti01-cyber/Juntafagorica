@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Simulador MVT + SRTF</title>
+
+    <link rel="stylesheet" href="pagina2.css">
+
+    <style>
+        
+            #timeline:has(#evento0:checked) ~ #estados #estado0 {
+                display: block;
+            }
+        
+            #timeline:has(#evento1:checked) ~ #estados #estado1 {
+                display: block;
+            }
+        
+            #timeline:has(#evento2:checked) ~ #estados #estado2 {
+                display: block;
+            }
+        
+            #timeline:has(#evento3:checked) ~ #estados #estado3 {
+                display: block;
+            }
+        
+            #timeline:has(#evento4:checked) ~ #estados #estado4 {
+                display: block;
+            }
+        
+            #timeline:has(#evento5:checked) ~ #estados #estado5 {
+                display: block;
+            }
+        
+            #timeline:has(#evento6:checked) ~ #estados #estado6 {
+                display: block;
+            }
+        
+            #timeline:has(#evento7:checked) ~ #estados #estado7 {
+                display: block;
+            }
+        
+            #timeline:has(#evento8:checked) ~ #estados #estado8 {
+                display: block;
+            }
+        
+            #timeline:has(#evento9:checked) ~ #estados #estado9 {
+                display: block;
+            }
+        
+            #timeline:has(#evento10:checked) ~ #estados #estado10 {
+                display: block;
+            }
+        
+            #timeline:has(#evento11:checked) ~ #estados #estado11 {
+                display: block;
+            }
+        
+            #timeline:has(#evento12:checked) ~ #estados #estado12 {
+                display: block;
+            }
+        
+            #timeline:has(#evento13:checked) ~ #estados #estado13 {
+                display: block;
+            }
+        
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Simulador MVT + SRTF</h1>
+        <p>Gestión de memoria y planificación de procesos</p>
+    </header>
+
+    <main>
+
+        <section class="lineatemp">
+
+            <h2>Línea temporal</h2>
+
+            <div id="timeline">
+                
+            <input type="radio" name="evento" id="evento0" checked>
+            <label for="evento0">T0</label>
+        
+            <input type="radio" name="evento" id="evento1" >
+            <label for="evento1">T4</label>
+        
+            <input type="radio" name="evento" id="evento2" >
+            <label for="evento2">T5</label>
+        
+            <input type="radio" name="evento" id="evento3" >
+            <label for="evento3">T5</label>
+        
+            <input type="radio" name="evento" id="evento4" >
+            <label for="evento4">T5</label>
+        
+            <input type="radio" name="evento" id="evento5" >
+            <label for="evento5">T6</label>
+        
+            <input type="radio" name="evento" id="evento6" >
+            <label for="evento6">T6</label>
+        
+            <input type="radio" name="evento" id="evento7" >
+            <label for="evento7">T6</label>
+        
+            <input type="radio" name="evento" id="evento8" >
+            <label for="evento8">T7</label>
+        
+            <input type="radio" name="evento" id="evento9" >
+            <label for="evento9">T9</label>
+        
+            <input type="radio" name="evento" id="evento10" >
+            <label for="evento10">T9</label>
+        
+            <input type="radio" name="evento" id="evento11" >
+            <label for="evento11">T13</label>
+        
+            <input type="radio" name="evento" id="evento12" >
+            <label for="evento12">T13</label>
+        
+            <input type="radio" name="evento" id="evento13" >
+            <label for="evento13">T17</label>
+        
+            </div>
+
+            <div id="estados">
+                
+            <div class="estado-evento" id="estado0">
+                <div class="cont-instante">
+                    <div class="instante-tiempo">
+                        <span>TIEMPO</span>
+                        <strong>T0</strong>
+                    </div>
+                    <div class="instante-evento">
+                        <span>EVENTO</span>
+                        <strong>Arribo de proceso(s): P1</strong>
+                    </div>
+                </div>
+
+                <div class="estado-principal">
+                    <div class="panel">
+                        <h2>Memoria</h2>
+                        <div class="memoria">
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 5.45%;">
+                <strong>P1</strong>
+                <span>30K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 76.36%;">
+                <strong>Libre</strong>
+                <span>420K</span>
+            </div>
+        </div>
+                        <div class="controles-memoria"><label class="btn-siguiente" for="evento1">Siguiente &#9654;</label></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2>CPU</h2>
+                        <div class="bloque-cpu">
+                            <div class="cpu-icon">⚙</div>
+                            <div class="cpu-proceso">
+                                <span>PROCESO EN EJECUCIÓN</span>
+                                <strong>P1</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="colas">
+            <div class="cola-indv">
+                <h3>NUEVOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso nuevo">P4</span><span class="parte-proceso nuevo">P2</span><span class="parte-proceso nuevo">P3</span><span class="parte-proceso nuevo">P5</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>LISTOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>SUSPENDIDOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>TERMINADOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        </div>
+            </div>
+        
+            <div class="estado-evento" id="estado1">
+                <div class="cont-instante">
+                    <div class="instante-tiempo">
+                        <span>TIEMPO</span>
+                        <strong>T4</strong>
+                    </div>
+                    <div class="instante-evento">
+                        <span>EVENTO</span>
+                        <strong>Arribo de proceso(s): P4</strong>
+                    </div>
+                </div>
+
+                <div class="estado-principal">
+                    <div class="panel">
+                        <h2>Memoria</h2>
+                        <div class="memoria">
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 5.45%;">
+                <strong>P1</strong>
+                <span>30K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 2.73%;">
+                <strong>P4</strong>
+                <span>15K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 73.64%;">
+                <strong>Libre</strong>
+                <span>405K</span>
+            </div>
+        </div>
+                        <div class="controles-memoria"><label class="btn-siguiente" for="evento2">Siguiente &#9654;</label></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2>CPU</h2>
+                        <div class="bloque-cpu">
+                            <div class="cpu-icon">⚙</div>
+                            <div class="cpu-proceso">
+                                <span>PROCESO EN EJECUCIÓN</span>
+                                <strong>P1</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="colas">
+            <div class="cola-indv">
+                <h3>NUEVOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso nuevo">P2</span><span class="parte-proceso nuevo">P3</span><span class="parte-proceso nuevo">P5</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>LISTOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso ">P4</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>SUSPENDIDOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>TERMINADOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        </div>
+            </div>
+        
+            <div class="estado-evento" id="estado2">
+                <div class="cont-instante">
+                    <div class="instante-tiempo">
+                        <span>TIEMPO</span>
+                        <strong>T5</strong>
+                    </div>
+                    <div class="instante-evento">
+                        <span>EVENTO</span>
+                        <strong>Finalización de P1</strong>
+                    </div>
+                </div>
+
+                <div class="estado-principal">
+                    <div class="panel">
+                        <h2>Memoria</h2>
+                        <div class="memoria">
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 5.45%;">
+                <strong>Libre</strong>
+                <span>30K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 2.73%;">
+                <strong>P4</strong>
+                <span>15K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 73.64%;">
+                <strong>Libre</strong>
+                <span>405K</span>
+            </div>
+        </div>
+                        <div class="controles-memoria"><label class="btn-siguiente" for="evento3">Siguiente &#9654;</label></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2>CPU</h2>
+                        <div class="bloque-cpu">
+                            <div class="cpu-icon">⚙</div>
+                            <div class="cpu-proceso">
+                                <span>PROCESO EN EJECUCIÓN</span>
+                                <strong>Libre</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="colas">
+            <div class="cola-indv">
+                <h3>NUEVOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso nuevo">P2</span><span class="parte-proceso nuevo">P3</span><span class="parte-proceso nuevo">P5</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>LISTOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso ">P4</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>SUSPENDIDOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>TERMINADOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso terminado">P1</span></div>
+            </div>
+        </div>
+            </div>
+        
+            <div class="estado-evento" id="estado3">
+                <div class="cont-instante">
+                    <div class="instante-tiempo">
+                        <span>TIEMPO</span>
+                        <strong>T5</strong>
+                    </div>
+                    <div class="instante-evento">
+                        <span>EVENTO</span>
+                        <strong>Comienzo de ejecución de: P4</strong>
+                    </div>
+                </div>
+
+                <div class="estado-principal">
+                    <div class="panel">
+                        <h2>Memoria</h2>
+                        <div class="memoria">
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 3.64%;">
+                <strong>P2</strong>
+                <span>20K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 1.82%;">
+                <strong>Libre</strong>
+                <span>10K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 2.73%;">
+                <strong>P4</strong>
+                <span>15K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 73.64%;">
+                <strong>Libre</strong>
+                <span>405K</span>
+            </div>
+        </div>
+                        <div class="controles-memoria"><label class="btn-siguiente" for="evento4">Siguiente &#9654;</label></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2>CPU</h2>
+                        <div class="bloque-cpu">
+                            <div class="cpu-icon">⚙</div>
+                            <div class="cpu-proceso">
+                                <span>PROCESO EN EJECUCIÓN</span>
+                                <strong>P4</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="colas">
+            <div class="cola-indv">
+                <h3>NUEVOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso nuevo">P3</span><span class="parte-proceso nuevo">P5</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>LISTOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso ">P2</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>SUSPENDIDOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>TERMINADOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso terminado">P1</span></div>
+            </div>
+        </div>
+            </div>
+        
+            <div class="estado-evento" id="estado4">
+                <div class="cont-instante">
+                    <div class="instante-tiempo">
+                        <span>TIEMPO</span>
+                        <strong>T5</strong>
+                    </div>
+                    <div class="instante-evento">
+                        <span>EVENTO</span>
+                        <strong>Arribo de proceso(s): P2</strong>
+                    </div>
+                </div>
+
+                <div class="estado-principal">
+                    <div class="panel">
+                        <h2>Memoria</h2>
+                        <div class="memoria">
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 3.64%;">
+                <strong>P2</strong>
+                <span>20K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 1.82%;">
+                <strong>Libre</strong>
+                <span>10K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 2.73%;">
+                <strong>P4</strong>
+                <span>15K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 73.64%;">
+                <strong>Libre</strong>
+                <span>405K</span>
+            </div>
+        </div>
+                        <div class="controles-memoria"><label class="btn-siguiente" for="evento5">Siguiente &#9654;</label></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2>CPU</h2>
+                        <div class="bloque-cpu">
+                            <div class="cpu-icon">⚙</div>
+                            <div class="cpu-proceso">
+                                <span>PROCESO EN EJECUCIÓN</span>
+                                <strong>P4</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="colas">
+            <div class="cola-indv">
+                <h3>NUEVOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso nuevo">P3</span><span class="parte-proceso nuevo">P5</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>LISTOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso ">P2</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>SUSPENDIDOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>TERMINADOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso terminado">P1</span></div>
+            </div>
+        </div>
+            </div>
+        
+            <div class="estado-evento" id="estado5">
+                <div class="cont-instante">
+                    <div class="instante-tiempo">
+                        <span>TIEMPO</span>
+                        <strong>T6</strong>
+                    </div>
+                    <div class="instante-evento">
+                        <span>EVENTO</span>
+                        <strong>Finalización de P4</strong>
+                    </div>
+                </div>
+
+                <div class="estado-principal">
+                    <div class="panel">
+                        <h2>Memoria</h2>
+                        <div class="memoria">
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 3.64%;">
+                <strong>P2</strong>
+                <span>20K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 78.18%;">
+                <strong>Libre</strong>
+                <span>430K</span>
+            </div>
+        </div>
+                        <div class="controles-memoria"><label class="btn-siguiente" for="evento6">Siguiente &#9654;</label></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2>CPU</h2>
+                        <div class="bloque-cpu">
+                            <div class="cpu-icon">⚙</div>
+                            <div class="cpu-proceso">
+                                <span>PROCESO EN EJECUCIÓN</span>
+                                <strong>Libre</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="colas">
+            <div class="cola-indv">
+                <h3>NUEVOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso nuevo">P3</span><span class="parte-proceso nuevo">P5</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>LISTOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso ">P2</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>SUSPENDIDOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>TERMINADOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso terminado">P1</span><span class="parte-proceso terminado">P4</span></div>
+            </div>
+        </div>
+            </div>
+        
+            <div class="estado-evento" id="estado6">
+                <div class="cont-instante">
+                    <div class="instante-tiempo">
+                        <span>TIEMPO</span>
+                        <strong>T6</strong>
+                    </div>
+                    <div class="instante-evento">
+                        <span>EVENTO</span>
+                        <strong>Comienzo de ejecución de: P3</strong>
+                    </div>
+                </div>
+
+                <div class="estado-principal">
+                    <div class="panel">
+                        <h2>Memoria</h2>
+                        <div class="memoria">
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 3.64%;">
+                <strong>P2</strong>
+                <span>20K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 54.55%;">
+                <strong>P3</strong>
+                <span>300K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 23.64%;">
+                <strong>Libre</strong>
+                <span>130K</span>
+            </div>
+        </div>
+                        <div class="controles-memoria"><label class="btn-siguiente" for="evento7">Siguiente &#9654;</label></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2>CPU</h2>
+                        <div class="bloque-cpu">
+                            <div class="cpu-icon">⚙</div>
+                            <div class="cpu-proceso">
+                                <span>PROCESO EN EJECUCIÓN</span>
+                                <strong>P3</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="colas">
+            <div class="cola-indv">
+                <h3>NUEVOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso nuevo">P5</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>LISTOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso ">P2</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>SUSPENDIDOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>TERMINADOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso terminado">P1</span><span class="parte-proceso terminado">P4</span></div>
+            </div>
+        </div>
+            </div>
+        
+            <div class="estado-evento" id="estado7">
+                <div class="cont-instante">
+                    <div class="instante-tiempo">
+                        <span>TIEMPO</span>
+                        <strong>T6</strong>
+                    </div>
+                    <div class="instante-evento">
+                        <span>EVENTO</span>
+                        <strong>Arribo de proceso(s): P3</strong>
+                    </div>
+                </div>
+
+                <div class="estado-principal">
+                    <div class="panel">
+                        <h2>Memoria</h2>
+                        <div class="memoria">
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 3.64%;">
+                <strong>P2</strong>
+                <span>20K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 54.55%;">
+                <strong>P3</strong>
+                <span>300K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 23.64%;">
+                <strong>Libre</strong>
+                <span>130K</span>
+            </div>
+        </div>
+                        <div class="controles-memoria"><label class="btn-siguiente" for="evento8">Siguiente &#9654;</label></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2>CPU</h2>
+                        <div class="bloque-cpu">
+                            <div class="cpu-icon">⚙</div>
+                            <div class="cpu-proceso">
+                                <span>PROCESO EN EJECUCIÓN</span>
+                                <strong>P3</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="colas">
+            <div class="cola-indv">
+                <h3>NUEVOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso nuevo">P5</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>LISTOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso ">P2</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>SUSPENDIDOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>TERMINADOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso terminado">P1</span><span class="parte-proceso terminado">P4</span></div>
+            </div>
+        </div>
+            </div>
+        
+            <div class="estado-evento" id="estado8">
+                <div class="cont-instante">
+                    <div class="instante-tiempo">
+                        <span>TIEMPO</span>
+                        <strong>T7</strong>
+                    </div>
+                    <div class="instante-evento">
+                        <span>EVENTO</span>
+                        <strong>Arribo de proceso(s): P5</strong>
+                    </div>
+                </div>
+
+                <div class="estado-principal">
+                    <div class="panel">
+                        <h2>Memoria</h2>
+                        <div class="memoria">
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 3.64%;">
+                <strong>P2</strong>
+                <span>20K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 54.55%;">
+                <strong>P3</strong>
+                <span>300K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 8.18%;">
+                <strong>P5</strong>
+                <span>45K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 15.45%;">
+                <strong>Libre</strong>
+                <span>85K</span>
+            </div>
+        </div>
+                        <div class="controles-memoria"><label class="btn-siguiente" for="evento9">Siguiente &#9654;</label></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2>CPU</h2>
+                        <div class="bloque-cpu">
+                            <div class="cpu-icon">⚙</div>
+                            <div class="cpu-proceso">
+                                <span>PROCESO EN EJECUCIÓN</span>
+                                <strong>P3</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="colas">
+            <div class="cola-indv">
+                <h3>NUEVOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>LISTOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso ">P2</span><span class="parte-proceso ">P5</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>SUSPENDIDOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>TERMINADOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso terminado">P1</span><span class="parte-proceso terminado">P4</span></div>
+            </div>
+        </div>
+            </div>
+        
+            <div class="estado-evento" id="estado9">
+                <div class="cont-instante">
+                    <div class="instante-tiempo">
+                        <span>TIEMPO</span>
+                        <strong>T9</strong>
+                    </div>
+                    <div class="instante-evento">
+                        <span>EVENTO</span>
+                        <strong>Finalización de P3</strong>
+                    </div>
+                </div>
+
+                <div class="estado-principal">
+                    <div class="panel">
+                        <h2>Memoria</h2>
+                        <div class="memoria">
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 3.64%;">
+                <strong>P2</strong>
+                <span>20K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 54.55%;">
+                <strong>Libre</strong>
+                <span>300K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 8.18%;">
+                <strong>P5</strong>
+                <span>45K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 15.45%;">
+                <strong>Libre</strong>
+                <span>85K</span>
+            </div>
+        </div>
+                        <div class="controles-memoria"><label class="btn-siguiente" for="evento10">Siguiente &#9654;</label></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2>CPU</h2>
+                        <div class="bloque-cpu">
+                            <div class="cpu-icon">⚙</div>
+                            <div class="cpu-proceso">
+                                <span>PROCESO EN EJECUCIÓN</span>
+                                <strong>Libre</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="colas">
+            <div class="cola-indv">
+                <h3>NUEVOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>LISTOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso ">P2</span><span class="parte-proceso ">P5</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>SUSPENDIDOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>TERMINADOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso terminado">P1</span><span class="parte-proceso terminado">P4</span><span class="parte-proceso terminado">P3</span></div>
+            </div>
+        </div>
+            </div>
+        
+            <div class="estado-evento" id="estado10">
+                <div class="cont-instante">
+                    <div class="instante-tiempo">
+                        <span>TIEMPO</span>
+                        <strong>T9</strong>
+                    </div>
+                    <div class="instante-evento">
+                        <span>EVENTO</span>
+                        <strong>Comienzo de ejecución de: P2</strong>
+                    </div>
+                </div>
+
+                <div class="estado-principal">
+                    <div class="panel">
+                        <h2>Memoria</h2>
+                        <div class="memoria">
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 3.64%;">
+                <strong>P2</strong>
+                <span>20K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 54.55%;">
+                <strong>Libre</strong>
+                <span>300K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 8.18%;">
+                <strong>P5</strong>
+                <span>45K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 15.45%;">
+                <strong>Libre</strong>
+                <span>85K</span>
+            </div>
+        </div>
+                        <div class="controles-memoria"><label class="btn-siguiente" for="evento11">Siguiente &#9654;</label></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2>CPU</h2>
+                        <div class="bloque-cpu">
+                            <div class="cpu-icon">⚙</div>
+                            <div class="cpu-proceso">
+                                <span>PROCESO EN EJECUCIÓN</span>
+                                <strong>P2</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="colas">
+            <div class="cola-indv">
+                <h3>NUEVOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>LISTOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso ">P5</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>SUSPENDIDOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>TERMINADOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso terminado">P1</span><span class="parte-proceso terminado">P4</span><span class="parte-proceso terminado">P3</span></div>
+            </div>
+        </div>
+            </div>
+        
+            <div class="estado-evento" id="estado11">
+                <div class="cont-instante">
+                    <div class="instante-tiempo">
+                        <span>TIEMPO</span>
+                        <strong>T13</strong>
+                    </div>
+                    <div class="instante-evento">
+                        <span>EVENTO</span>
+                        <strong>Finalización de P2</strong>
+                    </div>
+                </div>
+
+                <div class="estado-principal">
+                    <div class="panel">
+                        <h2>Memoria</h2>
+                        <div class="memoria">
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 58.18%;">
+                <strong>Libre</strong>
+                <span>320K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 8.18%;">
+                <strong>P5</strong>
+                <span>45K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 15.45%;">
+                <strong>Libre</strong>
+                <span>85K</span>
+            </div>
+        </div>
+                        <div class="controles-memoria"><label class="btn-siguiente" for="evento12">Siguiente &#9654;</label></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2>CPU</h2>
+                        <div class="bloque-cpu">
+                            <div class="cpu-icon">⚙</div>
+                            <div class="cpu-proceso">
+                                <span>PROCESO EN EJECUCIÓN</span>
+                                <strong>Libre</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="colas">
+            <div class="cola-indv">
+                <h3>NUEVOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>LISTOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso ">P5</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>SUSPENDIDOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>TERMINADOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso terminado">P1</span><span class="parte-proceso terminado">P4</span><span class="parte-proceso terminado">P2</span><span class="parte-proceso terminado">P3</span></div>
+            </div>
+        </div>
+            </div>
+        
+            <div class="estado-evento" id="estado12">
+                <div class="cont-instante">
+                    <div class="instante-tiempo">
+                        <span>TIEMPO</span>
+                        <strong>T13</strong>
+                    </div>
+                    <div class="instante-evento">
+                        <span>EVENTO</span>
+                        <strong>Comienzo de ejecución de: P5</strong>
+                    </div>
+                </div>
+
+                <div class="estado-principal">
+                    <div class="panel">
+                        <h2>Memoria</h2>
+                        <div class="memoria">
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 58.18%;">
+                <strong>Libre</strong>
+                <span>320K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-proceso"
+                 style="width: 8.18%;">
+                <strong>P5</strong>
+                <span>45K</span>
+            </div>
+        
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 15.45%;">
+                <strong>Libre</strong>
+                <span>85K</span>
+            </div>
+        </div>
+                        <div class="controles-memoria"><label class="btn-siguiente" for="evento13">Siguiente &#9654;</label></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2>CPU</h2>
+                        <div class="bloque-cpu">
+                            <div class="cpu-icon">⚙</div>
+                            <div class="cpu-proceso">
+                                <span>PROCESO EN EJECUCIÓN</span>
+                                <strong>P5</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="colas">
+            <div class="cola-indv">
+                <h3>NUEVOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>LISTOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>SUSPENDIDOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>TERMINADOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso terminado">P1</span><span class="parte-proceso terminado">P4</span><span class="parte-proceso terminado">P2</span><span class="parte-proceso terminado">P3</span></div>
+            </div>
+        </div>
+            </div>
+        
+            <div class="estado-evento" id="estado13">
+                <div class="cont-instante">
+                    <div class="instante-tiempo">
+                        <span>TIEMPO</span>
+                        <strong>T17</strong>
+                    </div>
+                    <div class="instante-evento">
+                        <span>EVENTO</span>
+                        <strong>Finalización de P5</strong>
+                    </div>
+                </div>
+
+                <div class="estado-principal">
+                    <div class="panel">
+                        <h2>Memoria</h2>
+                        <div class="memoria">
+            <div class="bloque-memoria bloque-libre"
+                 style="width: 81.82%;">
+                <strong>Libre</strong>
+                <span>450K</span>
+            </div>
+        </div>
+                        <div class="controles-memoria"><span class="btn-siguiente deshabilitado">Fin &#9632;</span></div>
+                    </div>
+
+                    <div class="panel">
+                        <h2>CPU</h2>
+                        <div class="bloque-cpu">
+                            <div class="cpu-icon">⚙</div>
+                            <div class="cpu-proceso">
+                                <span>PROCESO EN EJECUCIÓN</span>
+                                <strong>Libre</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="colas">
+            <div class="cola-indv">
+                <h3>NUEVOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>LISTOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>SUSPENDIDOS</h3>
+                <div class="procesos-cola"><span class="cola-vacia">Sin procesos</span></div>
+            </div>
+        
+            <div class="cola-indv">
+                <h3>TERMINADOS</h3>
+                <div class="procesos-cola"><span class="parte-proceso terminado">P1</span><span class="parte-proceso terminado">P4</span><span class="parte-proceso terminado">P2</span><span class="parte-proceso terminado">P3</span><span class="parte-proceso terminado">P5</span></div>
+            </div>
+        </div>
+            </div>
+        
+            </div>
+
+        </section>
+
+        <section class="estadisticas">
+
+            <h2>Estadísticas de la simulación</h2>
+
+            
+        <div class="resumen-estadisticas">
+            <div class="bloque-estadistica">
+                <span>PROMEDIO DE RETORNO</span>
+                <strong>5.60</strong>
+            </div>
+
+            <div class="bloque-estadistica">
+                <span>PROMEDIO DE ESPERA</span>
+                <strong>2.20</strong>
+            </div>
+
+            <div class="bloque-estadistica">
+                <span>RENDIMIENTO</span>
+                <strong>0.2941</strong>
+            </div>
+        </div>
+
+        <div class="tabla-estadisticas">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Proceso</th>
+                        <th>Arribo</th>
+                        <th>Irrupción</th>
+                        <th>Finalización</th>
+                        <th>Retorno</th>
+                        <th>Espera</th>
+                    </tr>
+                </thead>
+                <tbody>
+    
+            <tr>
+                <td>P1</td>
+                <td>0</td>
+                <td>5</td>
+                <td>5</td>
+                <td>5</td>
+                <td>0</td>
+            </tr>
+        
+            <tr>
+                <td>P2</td>
+                <td>5</td>
+                <td>4</td>
+                <td>13</td>
+                <td>8</td>
+                <td>4</td>
+            </tr>
+        
+            <tr>
+                <td>P3</td>
+                <td>6</td>
+                <td>3</td>
+                <td>9</td>
+                <td>3</td>
+                <td>0</td>
+            </tr>
+        
+            <tr>
+                <td>P4</td>
+                <td>4</td>
+                <td>1</td>
+                <td>6</td>
+                <td>2</td>
+                <td>1</td>
+            </tr>
+        
+            <tr>
+                <td>P5</td>
+                <td>7</td>
+                <td>4</td>
+                <td>17</td>
+                <td>10</td>
+                <td>6</td>
+            </tr>
+        
+                </tbody>
+            </table>
+        </div>
+    
+
+        </section>
+
+    </main>
+
+</body>
+</html>
