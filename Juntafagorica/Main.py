@@ -126,51 +126,27 @@ def simular(procesos, paso_a_paso=False):
     memoria = inicializar_memoria()
     eventos = []
     procesos.sort(key=lambda p: (p.tiempo_arribo, p.id_proceso))
-
+ 
     tiempo = 0
     ejecutando = None
     llegadas_mostradas = set()
-
+ 
     while any(proceso.estado != "Terminado" for proceso in procesos):
-        # Detectar arribos que todavía no se mostraron.
+        # 1) Arribos de este instante (todavía no mostrados).
         llegadas = [
             proceso
             for proceso in procesos
             if proceso.tiempo_arribo <= tiempo
             and proceso.id_proceso not in llegadas_mostradas
         ]
-
+ 
         for proceso in llegadas:
             llegadas_mostradas.add(proceso.id_proceso)
-
+ 
+        # 2) Admisión (suspendidos primero, luego nuevos).
         admitir_procesos(memoria, procesos, tiempo)
-
-        elegido = seleccionar_srtf(procesos)
-
-        # Si no hay procesos listos, avanzar hasta el próximo arribo.
-        if elegido is None:
-            proximos_arribos = [
-                proceso.tiempo_arribo
-                for proceso in procesos
-                if proceso.estado == "Nuevo"
-                and proceso.tiempo_arribo > tiempo
-            ]
-
-            if not proximos_arribos:
-                raise RuntimeError(
-                    "No hay procesos ejecutables ni próximos arribos."
-                )
-
-            tiempo = min(proximos_arribos)
-            continue
-
-        # Si SRTF cambia de proceso, el anterior vuelve a Listo.
-        if ejecutando is not None and ejecutando is not elegido:
-            ejecutando.estado = "Listo"
-
-        elegido.estado = "Ejecucion"
-        ejecutando = elegido
-
+ 
+        # 3) Evento de arribo: la CPU todavía no cambió de proceso.
         if llegadas:
             ids = ", ".join(p.id_proceso for p in llegadas)
             registrar_evento(
@@ -182,11 +158,49 @@ def simular(procesos, paso_a_paso=False):
                 eventos,
                 paso_a_paso,
             )
-
-        # Ejecutar una unidad de tiempo y volver a evaluar SRTF.
+ 
+        # 4) Selección SRTF.
+        elegido = seleccionar_srtf(procesos)
+ 
+        # Si no hay procesos listos, avanzar hasta el próximo arribo.
+        if elegido is None:
+            proximos_arribos = [
+                proceso.tiempo_arribo
+                for proceso in procesos
+                if proceso.estado == "Nuevo"
+                and proceso.tiempo_arribo > tiempo
+            ]
+ 
+            if not proximos_arribos:
+                raise RuntimeError(
+                    "No hay procesos ejecutables ni próximos arribos."
+                )
+ 
+            tiempo = min(proximos_arribos)
+            continue
+ 
+        # 5) Si la CPU cambia de proceso, se registra el comienzo de ejecución.
+        if elegido is not ejecutando:
+            if ejecutando is not None:
+                ejecutando.estado = "Listo"
+ 
+            elegido.estado = "Ejecucion"
+            ejecutando = elegido
+ 
+            registrar_evento(
+                memoria,
+                procesos,
+                tiempo,
+                f"Comienzo de ejecución de: {ejecutando.id_proceso}",
+                ejecutando,
+                eventos,
+                paso_a_paso,
+            )
+ 
+        # 6) Ejecutar una unidad de tiempo y volver a evaluar SRTF.
         ejecutando.tiempo_restante -= 1
         tiempo += 1
-
+ 
         if ejecutando.tiempo_restante == 0:
             finalizado = ejecutando
             finalizado.estado = "Terminado"
@@ -198,11 +212,10 @@ def simular(procesos, paso_a_paso=False):
                 finalizado.tiempo_retorno
                 - finalizado.tiempo_irrupcion
             )
-
+ 
             liberar_memoria(memoria, finalizado.id_proceso)
             ejecutando = None
-
-            # Primer evento: finalización del proceso.
+ 
             registrar_evento(
                 memoria,
                 procesos,
@@ -212,28 +225,7 @@ def simular(procesos, paso_a_paso=False):
                 eventos,
                 paso_a_paso,
             )
-
-            # Volver a intentar admitir procesos suspendidos.
-            admitir_procesos(memoria, procesos, tiempo)
-
-            # Seleccionar al siguiente proceso con SRTF.
-            siguiente = seleccionar_srtf(procesos)
-
-            if siguiente is not None:
-                siguiente.estado = "Ejecucion"
-                ejecutando = siguiente
-
-                # Segundo evento: comienzo de ejecución.
-                registrar_evento(
-                    memoria,
-                    procesos,
-                    tiempo,
-                    f"Comienzo de ejecución de: {siguiente.id_proceso}",
-                    ejecutando,
-                    eventos,
-                    paso_a_paso,
-                )
-
+ 
     return procesos, tiempo, eventos
 
 
