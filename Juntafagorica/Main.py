@@ -8,7 +8,6 @@ from shell import (
     inicializar_memoria,
     asignar_memoria,
     liberar_memoria,
-    mostrar_memoria,
     seleccionar_srtf,
 )
 
@@ -278,6 +277,37 @@ def cargar_archivo():
     return ruta, procesos
 
 
+def cargar_archivo_por_ruta():
+    """Opcion 2. Pide la ruta por teclado. Devuelve (ruta, procesos) o None."""
+    entrada = input("\nIngrese la ruta del archivo CSV: ").strip().strip('"').strip("'")
+
+    if not entrada:
+        print("\nNo se ingreso ninguna ruta.")
+        return None
+
+    ruta = Path(entrada)
+
+    if not ruta.is_file():
+        print(f"\nNo se encontro el archivo: {ruta}")
+        return None
+
+    try:
+        procesos = cargar_procesos(ruta)
+    except (OSError, ValueError, csv.Error) as error:
+        print(f"\nArchivo invalido ({ruta.name}): {error}")
+        return None
+
+    if not procesos:
+        print(
+            f"\nArchivo invalido ({ruta.name}): "
+            "el CSV debe incluir al menos un proceso."
+        )
+        return None
+
+    print(f"\nArchivo cargado: {ruta.name} ({len(procesos)} procesos)")
+    return ruta, procesos
+
+
 def imprimir_tabla(titulo, columnas, filas):
     anchos = []
 
@@ -380,10 +410,11 @@ def generar_visualizador(procesos):
 def mostrar_menu(nombre_archivo):
     print("\n=== Simulador MVT + SRTF ===")
     print(f"Archivo cargado: {nombre_archivo or 'ninguno'}")
-    print("1. Cargar archivo")
-    print("2. Ejecutar por consola")
-    print("3. Generar el html")
-    print("4. Salir")
+    print("1. Cargar archivo por explorador de windows")
+    print("2. Cargar archivo por ruta")
+    print("3. Ejecutar por consola")
+    print("4. Generar el html")
+    print("5. Salir")
 
 
 def menu():
@@ -394,14 +425,17 @@ def menu():
         mostrar_menu(nombre_archivo)
         opcion = input("Elegi una opcion: ").strip()
 
-        if opcion == "1":
-            resultado = cargar_archivo()
+        if opcion in ("1", "2"):
+            if opcion == "1":
+                resultado = cargar_archivo()
+            else:
+                resultado = cargar_archivo_por_ruta()
 
             if resultado is not None:
                 ruta, procesos = resultado
                 nombre_archivo = ruta.name
 
-        elif opcion in ("2", "3"):
+        elif opcion in ("3", "4"):
             if procesos is None:
                 print(
                     "\nNo hay un archivo cargado. "
@@ -409,20 +443,20 @@ def menu():
                 )
                 continue
 
-            if opcion == "2":
+            if opcion == "3":
                 ejecutar_por_consola(copy.deepcopy(procesos))
-            else:
+            elif opcion == "4":
                 try:
                     generar_visualizador(procesos)
                 except RuntimeError as error:
                     print(f"\nError: {error}")
 
-        elif opcion == "4":
+        elif opcion == "5":
             print("Hasta luego.")
             break
 
         else:
-            print("Opcion invalida. Elegi un numero del 1 al 4.")
+            print("Opcion invalida. Elegi un numero del 1 al 5.")
 
 
 if __name__ == "__main__":
