@@ -11,9 +11,7 @@ from shell import (
     seleccionar_srtf,
 )
 
-
 MAX_PROCESOS_ACTIVOS = 5
-
 
 def contar_activos(procesos):
     estados_activos = ("Listo", "Ejecucion", "Listo y Suspendido")
