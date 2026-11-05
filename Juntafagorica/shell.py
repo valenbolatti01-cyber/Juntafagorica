@@ -1,4 +1,8 @@
 import csv
+import io
+import re
+import unicodedata
+from pathlib import Path
 
 
 class Proceso:
@@ -16,38 +20,270 @@ class Proceso:
         self.tiempo_retorno = 0
 
 
+class ErrorCSV(ValueError):
+    """Error de lectura o validacion del archivo de procesos."""
+    pass
+
+COLUMNAS_REQUERIDAS = ("id", "tamanio", "arribo", "irrupcion")
+MAX_PROCESOS = 10
+
+
+def _normalizar_columna(nombre):
+    nombre = nombre.strip().casefold()
+    nombre = unicodedata.normalize("NFKD", nombre)
+    nombre = "".join(
+        caracter
+        for caracter in nombre
+        if not unicodedata.combining(caracter)
+    )    
+
+    # Permite que "tamano" y "tamaño" correspondan a "tamanio"
+    if nombre == "tamano":
+        nombre = "tamanio"
+
+    return nombre
+
+
+def _leer_texto_csv(ruta_archivo):
+    ruta = Path(ruta_archivo)
+
+    if not ruta.exists():
+        raise ErrorCSV(
+            f"No se encontro el archivo '{ruta.name}' en '{ruta.parent}'."
+        )
+
+    if not ruta.is_file():
+        raise ErrorCSV(f"'{ruta.name}' no es un archivo.")
+
+    try:
+        datos = ruta.read_bytes()
+    except PermissionError as error:
+        raise ErrorCSV(f"No hay permiso para leer '{ruta.name}'.") from error
+    except OSError as error:
+        raise ErrorCSV(f"No se pudo leer '{ruta.name}': {error}.") from error
+
+    if not datos:
+        raise ErrorCSV("El archivo esta vacio.")
+
+    try:
+        if datos.startswith((b"\xff\xfe", b"\xfe\xff")):
+            texto = datos.decode("utf-16")
+        else:
+            try:
+                texto = datos.decode("utf-8-sig")
+            except UnicodeDecodeError:
+                texto = datos.decode("cp1252")
+    except UnicodeError as error:
+        raise ErrorCSV(
+            "No se pudo decodificar el archivo. "
+            "Guardalo como CSV UTF-8."
+        ) from error
+
+    # Quita marcas BOM que puedan haber quedado dentro del contenido.
+    texto = texto.replace("\ufeff", "")
+
+    if "\x00" in texto:
+        raise ErrorCSV(
+            "El archivo contiene caracteres nulos y no parece ser un CSV de texto."
+        )
+
+    return texto
+
+
+def _detectar_separador(texto):
+    muestra = "\n".join(
+        linea for linea in texto.splitlines() if linea.strip()
+    )[:4096]
+
+    try:
+        dialecto = csv.Sniffer().sniff(muestra, delimiters=",;\t")
+        return dialecto.delimiter
+    except csv.Error:
+        primera_linea = next(
+            (linea for linea in texto.splitlines() if linea.strip()),
+            "",
+        )
+        cantidades = {
+            separador: primera_linea.count(separador)
+            for separador in (",", ";", "\t")
+        }
+        mejor = max(cantidades, key=cantidades.get)
+
+        return mejor if cantidades[mejor] else ","
+
+
+def _leer_entero(valor, nombre_campo, numero_linea, minimo, maximo=None):
+    valor = valor.strip()
+
+    # Se permiten solamente números ASCII con signo negativo opcional.
+    # Así se rechazan decimales, notación científica, guiones bajos y
+    # dígitos Unicode que int() aceptaría.
+    if not re.fullmatch(r"-?[0-9]+", valor):
+        raise ErrorCSV(
+            f"Linea {numero_linea}: '{nombre_campo}' debe ser un entero "
+            f"sin decimales (se leyo '{valor}')."
+        )
+
+    numero = int(valor)
+
+    if numero < 0:
+        raise ErrorCSV(
+            f"Linea {numero_linea}: '{nombre_campo}' no puede ser negativo."
+        )
+
+    if numero < minimo:
+        raise ErrorCSV(
+            f"Linea {numero_linea}: '{nombre_campo}' debe ser como minimo "
+            f"{minimo}."
+        )
+
+    if maximo is not None and numero > maximo:
+        raise ErrorCSV(
+            f"Linea {numero_linea}: '{nombre_campo}' debe ser como maximo "
+            f"{maximo}."
+        )
+
+    return numero
+
+
 def cargar_procesos(ruta_archivo):
+    texto = _leer_texto_csv(ruta_archivo)
+    separador = _detectar_separador(texto)
+    lector = csv.reader(
+        io.StringIO(texto),
+        delimiter=separador,
+        strict=True,
+    )
+
+    # Buscar el primer registro que no esté vacío para usarlo como encabezado.
+    while True:
+        linea_encabezado = lector.line_num + 1
+
+        try:
+            encabezado = next(lector)
+        except StopIteration:
+            raise ErrorCSV("El archivo no contiene un encabezado.")
+        except csv.Error as error:
+            raise ErrorCSV(
+                f"Formato CSV invalido cerca de la linea "
+                f"{linea_encabezado}: revisa las comillas."
+            ) from error
+
+        if encabezado and any(valor.strip() for valor in encabezado):
+            break
+
+    columnas = [_normalizar_columna(nombre) for nombre in encabezado]
+
+    repetidas = sorted({
+        nombre for nombre in columnas
+        if columnas.count(nombre) > 1
+    })
+    if repetidas:
+        raise ErrorCSV(
+            "Columnas repetidas en el encabezado: "
+            + ", ".join(repetidas)
+            + "."
+        )
+
+    faltantes = [
+        nombre
+        for nombre in COLUMNAS_REQUERIDAS
+        if nombre not in columnas
+    ]
+    if faltantes:
+        raise ErrorCSV(
+            "Faltan columnas en el encabezado: "
+            + ", ".join(faltantes)
+            + "."
+        )
+
+    sobrantes = [
+        nombre
+        for nombre in columnas
+        if nombre not in COLUMNAS_REQUERIDAS
+    ]
+    if sobrantes:
+        raise ErrorCSV(
+            "Columnas que no corresponden: "
+            + ", ".join(sobrantes)
+            + "."
+        )
+
     procesos = []
     ids = set()
 
-    with open(ruta_archivo, newline="", encoding="utf-8-sig") as archivo:
-        lector = csv.DictReader(archivo)
+    while True:
+        linea_inicio = lector.line_num + 1
 
-        columnas = {"id", "tamanio", "arribo", "irrupcion"}
-        if lector.fieldnames is None or not columnas.issubset(lector.fieldnames):
-            raise ValueError("El CSV debe tener: id,tamanio,arribo,irrupcion")
+        try:
+            fila = next(lector)
+        except StopIteration:
+            break
+        except csv.Error as error:
+            raise ErrorCSV(
+                f"Formato CSV invalido desde la linea {linea_inicio}: "
+                "revisa que las comillas esten cerradas."
+            ) from error
 
-        for numero_fila, fila in enumerate(lector, start=2):
-            try:
-                id_proceso = fila["id"].strip()
-                tamanio = int(fila["tamanio"])
-                arribo = int(fila["arribo"])
-                irrupcion = int(fila["irrupcion"])
-            except (ValueError, TypeError, AttributeError) as error:
-                raise ValueError(
-                    f"Datos invalidos en la fila {numero_fila}"
-                ) from error
+        # Ignorar líneas realmente vacías, pero no filas como ",,,"
+        if not fila or all(not valor.strip() for valor in fila):
+            continue
 
-            if not id_proceso or id_proceso in ids:
-                raise ValueError(f"ID vacio o repetido en la fila {numero_fila}")
-            if not 0 < tamanio <= 450 or arribo < 0 or irrupcion <= 0:
-                raise ValueError(f"Valores fuera de rango en la fila {numero_fila}")
+        if len(procesos) >= MAX_PROCESOS:
+            raise ErrorCSV(
+                f"El archivo no puede contener mas de {MAX_PROCESOS} procesos."
+            )
 
-            ids.add(id_proceso)
-            procesos.append(Proceso(id_proceso, tamanio, arribo, irrupcion))
+        if len(fila) != len(columnas):
+            raise ErrorCSV(
+                f"Linea {linea_inicio}: tiene {len(fila)} valores y "
+                f"deberia tener {len(columnas)}."
+            )
 
-            if len(procesos) > 10:
-                raise ValueError("El archivo no puede contener mas de 10 procesos")
+        datos = dict(zip(columnas, fila))
+
+        id_proceso = datos["id"].strip()
+        if not id_proceso:
+            raise ErrorCSV(
+                f"Linea {linea_inicio}: el campo 'id' esta vacio."
+            )
+        
+        if not re.fullmatch(r"[A-Za-z0-9]{1,10}", id_proceso):
+            raise ErrorCSV(
+                f"Linea {linea_inicio}: el ID '{id_proceso}' "
+                "debe tener entre 1 y 10 letras o numeros."
+            )
+
+        if id_proceso.casefold() == "so":
+            raise ErrorCSV(
+                f"Linea {linea_inicio}: 'SO' esta reservado "
+                "para el sistema operativo."
+            )
+
+        id_normalizado = id_proceso.casefold()
+        if id_normalizado in ids:
+            raise ErrorCSV(
+                f"Linea {linea_inicio}: el ID '{id_proceso}' "
+                "ya fue utilizado, ignorando mayusculas y minusculas."
+            )
+        
+        tamanio = _leer_entero(
+            datos["tamanio"], "tamanio", linea_inicio, 1, 450
+        )
+        arribo = _leer_entero(
+            datos["arribo"], "arribo", linea_inicio, 0
+        )
+        irrupcion = _leer_entero(
+            datos["irrupcion"], "irrupcion", linea_inicio, 1
+        )
+
+        ids.add(id_normalizado)
+        procesos.append(
+            Proceso(id_proceso, tamanio, arribo, irrupcion)
+        )
+
+    if not procesos:
+        raise ErrorCSV("El archivo no tiene procesos; solo tiene el encabezado.")
 
     return procesos
 
@@ -82,7 +318,7 @@ def renumerar_particiones(memoria):
 
 
 def mostrar_memoria(memoria):
-    columnas = ["ID", "Inicio", "Tamano", "Proceso", "Frag. Externa"]
+    columnas = ["ID", "Inicio", "Tamano", "Proceso", "Frag. Interna"]
 
     filas = []
     for particion in memoria:
@@ -160,6 +396,7 @@ def liberar_memoria(memoria, id_proceso):
 
     renumerar_particiones(memoria)
     return True
+
 
 def seleccionar_srtf(procesos):
     candidatos = [

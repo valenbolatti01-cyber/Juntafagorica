@@ -81,6 +81,40 @@ def generar_html(eventos, procesos, tiempo_total):
 
         memoria = generar_memoria_html(evento["memoria"])
 
+        detalle_fragmentacion = ""
+
+        if evento["bloqueados_por_fragmentacion"]:
+            ids = ", ".join(
+                html.escape(str(id_proceso))
+                for id_proceso in evento["bloqueados_por_fragmentacion"]
+            )
+            detalle_fragmentacion += (
+                '<p class="detalle-fragmentacion">'
+                f'No entran por fragmentacion externa: {ids}. '
+                "El espacio libre total alcanza, pero esta separado."
+                "</p>"
+            )
+
+        if evento["bloqueados_por_falta_total"]:
+            ids = ", ".join(
+                html.escape(str(id_proceso))
+                for id_proceso in evento["bloqueados_por_falta_total"]
+            )
+            detalle_fragmentacion += (
+                '<p class="detalle-fragmentacion">'
+                f"No hay memoria libre total suficiente para: {ids}."
+                "</p>"
+            )
+
+        resumen_memoria = (
+            '<p class="resumen-memoria">'
+            f"Libre total: {evento['libre_total']}K | "
+            f"Hueco mayor: {evento['hueco_mayor']}K | "
+            f"Fragmentacion externa: {evento['frag_externa']}K"
+            "</p>"
+            + detalle_fragmentacion
+        )
+
         # Botón "Siguiente"
         if i < len(eventos) - 1:
             boton = (f'<label class="btn-siguiente" for="evento{i + 1}">'
@@ -107,6 +141,7 @@ def generar_html(eventos, procesos, tiempo_total):
                     <div class="panel">
                         <h2>Memoria</h2>
                         <div class="memoria">{memoria}</div>
+                        {resumen_memoria}
                         <div class="controles-memoria">{boton}</div>
                     </div>
 

@@ -510,3 +510,15 @@ main {
         padding: 15px;
     }
 }
+
+.resumen-memoria,
+.detalle-fragmentacion {
+    margin: 12px 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #374151;
+}
+
+.detalle-fragmentacion {
+    color: #92400e;
+}

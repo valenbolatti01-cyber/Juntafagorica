@@ -43,6 +43,44 @@ def admitir_procesos(memoria, procesos, tiempo):
             proceso.estado = "Listo y Suspendido"
 
 
+def calcular_estado_fragmentacion(memoria, procesos):
+    huecos_libres = [
+        particion.tamanio
+        for particion in memoria
+        if particion.esta_libre()
+    ]
+
+    libre_total = sum(huecos_libres)
+    hueco_mayor = max(huecos_libres, default=0)
+    frag_externa = libre_total - hueco_mayor
+
+    suspendidos = [
+        proceso
+        for proceso in procesos
+        if proceso.estado == "Listo y Suspendido"
+    ]
+
+    bloqueados_por_fragmentacion = [
+        proceso.id_proceso
+        for proceso in suspendidos
+        if hueco_mayor < proceso.tamanio <= libre_total
+    ]
+
+    bloqueados_por_falta_total = [
+        proceso.id_proceso
+        for proceso in suspendidos
+        if proceso.tamanio > libre_total
+    ]
+
+    return {
+        "libre_total": libre_total,
+        "hueco_mayor": hueco_mayor,
+        "frag_externa": frag_externa,
+        "bloqueados_por_fragmentacion": bloqueados_por_fragmentacion,
+        "bloqueados_por_falta_total": bloqueados_por_falta_total,
+    }
+
+
 def mostrar_evento_consola(evento):
     print(f"\nTiempo {evento['tiempo']} - {evento['descripcion']}")
     print(f"Ejecucion: {evento['cpu']}")
@@ -64,9 +102,26 @@ def mostrar_evento_consola(evento):
 
     imprimir_tabla(
         "Particiones de memoria",
-        ["ID", "Inicio", "Tamano", "Proceso", "Frag. Externa"],
+        ["ID", "Inicio", "Tamano", "Proceso", "Frag. Interna"],
         filas_memoria,
     )
+
+    print(
+        f"Memoria libre total: {evento['libre_total']}K | "
+        f"Hueco mayor: {evento['hueco_mayor']}K | "
+        f"Fragmentacion externa: {evento['frag_externa']}K"
+    )
+
+    if evento["bloqueados_por_fragmentacion"]:
+        ids = ", ".join(evento["bloqueados_por_fragmentacion"])
+        print(
+            f"No entran por fragmentacion externa: {ids}. "
+            "El espacio libre total alcanza, pero esta separado."
+        )
+
+    if evento["bloqueados_por_falta_total"]:
+        ids = ", ".join(evento["bloqueados_por_falta_total"])
+        print(f"No hay memoria libre total suficiente para: {ids}.")
 
 
 def registrar_evento(
@@ -106,6 +161,7 @@ def registrar_evento(
         ]
     }
 
+    evento.update(calcular_estado_fragmentacion(memoria, procesos))
     eventos.append(evento)
 
     if paso_a_paso:
@@ -123,11 +179,11 @@ def simular(procesos, paso_a_paso=False):
     memoria = inicializar_memoria()
     eventos = []
     procesos.sort(key=lambda p: (p.tiempo_arribo, p.id_proceso))
- 
+
     tiempo = 0
     ejecutando = None
     llegadas_mostradas = set()
- 
+
     while any(proceso.estado != "Terminado" for proceso in procesos):
         # 1) Arribos de este instante (todavía no mostrados).
         llegadas = [
@@ -136,13 +192,13 @@ def simular(procesos, paso_a_paso=False):
             if proceso.tiempo_arribo <= tiempo
             and proceso.id_proceso not in llegadas_mostradas
         ]
- 
+
         for proceso in llegadas:
             llegadas_mostradas.add(proceso.id_proceso)
- 
+
         # 2) Admisión (suspendidos primero, luego nuevos).
         admitir_procesos(memoria, procesos, tiempo)
- 
+
         # 3) Evento de arribo: la CPU todavía no cambió de proceso.
         if llegadas:
             ids = ", ".join(p.id_proceso for p in llegadas)
@@ -155,10 +211,10 @@ def simular(procesos, paso_a_paso=False):
                 eventos,
                 paso_a_paso,
             )
- 
+
         # 4) Selección SRTF.
         elegido = seleccionar_srtf(procesos)
- 
+
         # Si no hay procesos listos, avanzar hasta el próximo arribo.
         if elegido is None:
             proximos_arribos = [
@@ -167,23 +223,23 @@ def simular(procesos, paso_a_paso=False):
                 if proceso.estado == "Nuevo"
                 and proceso.tiempo_arribo > tiempo
             ]
- 
+
             if not proximos_arribos:
                 raise RuntimeError(
                     "No hay procesos ejecutables ni próximos arribos."
                 )
- 
+
             tiempo = min(proximos_arribos)
             continue
- 
+
         # 5) Si la CPU cambia de proceso, se registra el comienzo de ejecución.
         if elegido is not ejecutando:
             if ejecutando is not None:
                 ejecutando.estado = "Listo"
- 
+
             elegido.estado = "Ejecucion"
             ejecutando = elegido
- 
+
             registrar_evento(
                 memoria,
                 procesos,
@@ -193,11 +249,11 @@ def simular(procesos, paso_a_paso=False):
                 eventos,
                 paso_a_paso,
             )
- 
+
         # 6) Ejecutar una unidad de tiempo y volver a evaluar SRTF.
         ejecutando.tiempo_restante -= 1
         tiempo += 1
- 
+
         if ejecutando.tiempo_restante == 0:
             finalizado = ejecutando
             finalizado.estado = "Terminado"
@@ -209,10 +265,10 @@ def simular(procesos, paso_a_paso=False):
                 finalizado.tiempo_retorno
                 - finalizado.tiempo_irrupcion
             )
- 
+
             liberar_memoria(memoria, finalizado.id_proceso)
             ejecutando = None
- 
+
             registrar_evento(
                 memoria,
                 procesos,
@@ -222,32 +278,55 @@ def simular(procesos, paso_a_paso=False):
                 eventos,
                 paso_a_paso,
             )
- 
+
     return procesos, tiempo, eventos
 
 
 # VERIFICAR PORQUE SOLUCIONA PROBLEMAS QUE NO SABIAMOS QUE TENIAMOS
 
 def seleccionar_archivo():
-    """Abre el explorador de archivos y devuelve la ruta elegida (o None)."""
-    import tkinter as tk
-    from tkinter import filedialog
+    """Abre el explorador y devuelve la ruta elegida, o None."""
+    try:
+        import tkinter as tk
+        from tkinter import filedialog
+    except ImportError as error:
+        print(
+            "\nNo esta disponible tkinter "
+            f"({error}). Puedes cargar el CSV por ruta con la opcion 2."
+        )
+        return None
 
-    ventana = tk.Tk()
-    ventana.withdraw()
-    ventana.attributes("-topmost", True)
+    ventana = None
 
-    ruta = filedialog.askopenfilename(
-        title="Seleccionar archivo de procesos",
-        initialdir=str(Path(__file__).parent),
-        filetypes=[
-            ("Archivos CSV", "*.csv"),
-            ("Todos los archivos", "*.*"),
-        ],
-    )
+    try:
+        ventana = tk.Tk()
+        ventana.withdraw()
+        ventana.attributes("-topmost", True)
 
-    ventana.destroy()
-    return Path(ruta) if ruta else None
+        ruta = filedialog.askopenfilename(
+            title="Seleccionar archivo de procesos",
+            initialdir=str(Path(__file__).parent),
+            filetypes=[
+                ("Archivos CSV", "*.csv"),
+                ("Todos los archivos", "*.*"),
+            ],
+        )
+
+        return Path(ruta) if ruta else None
+
+    except tk.TclError as error:
+        print(
+            "\nNo se pudo abrir el explorador "
+            f"({error}). Puedes cargar el CSV por ruta con la opcion 2."
+        )
+        return None
+
+    finally:
+        if ventana is not None:
+            try:
+                ventana.destroy()
+            except tk.TclError:
+                pass
 
 
 def cargar_archivo():
@@ -446,8 +525,8 @@ def menu():
             elif opcion == "4":
                 try:
                     generar_visualizador(procesos)
-                except RuntimeError as error:
-                    print(f"\nError: {error}")
+                except (RuntimeError, OSError) as error:
+                    print(f"\nNo se pudo generar el visualizador: {error}")
 
         elif opcion == "5":
             print("Hasta luego.")
@@ -458,4 +537,7 @@ def menu():
 
 
 if __name__ == "__main__":
-    menu()
+    try:
+        menu()
+    except (KeyboardInterrupt, EOFError):
+        print("\nSimulacion interrumpida. Hasta luego.")
