@@ -13,6 +13,7 @@ from shell import (
 
 MAX_PROCESOS_ACTIVOS = 5
 
+
 def contar_activos(procesos):
     estados_activos = ("Listo", "Ejecucion", "Listo y Suspendido")
     return sum(
@@ -174,7 +175,6 @@ def registrar_evento(
         mostrar_evento_consola(evento)
 
 
-
 def simular(procesos, paso_a_paso=False):
     memoria = inicializar_memoria()
     eventos = []
@@ -250,9 +250,28 @@ def simular(procesos, paso_a_paso=False):
                 paso_a_paso,
             )
 
-        # 6) Ejecutar una unidad de tiempo y volver a evaluar SRTF.
-        ejecutando.tiempo_restante -= 1
-        tiempo += 1
+        # 6) Avanzar hasta el próximo evento:
+        #    una llegada nueva o la finalización del proceso actual.
+        proximos_arribos = [
+            proceso.tiempo_arribo
+            for proceso in procesos
+            if proceso.estado == "Nuevo"
+            and proceso.tiempo_arribo > tiempo
+        ]
+
+        tiempo_hasta_finalizacion = ejecutando.tiempo_restante
+
+        if proximos_arribos:
+            proxima_llegada = min(proximos_arribos)
+            duracion = min(
+                tiempo_hasta_finalizacion,
+                proxima_llegada - tiempo,
+            )
+        else:
+            duracion = tiempo_hasta_finalizacion
+
+        ejecutando.tiempo_restante -= duracion
+        tiempo += duracion
 
         if ejecutando.tiempo_restante == 0:
             finalizado = ejecutando
