@@ -40,4 +40,7 @@ Al iniciar, el sistema presenta un menú de 5 opciones:
 # Analizar los resultados de la simulación
 
 * **En la consola (Opción 3):** Al concluir todos los eventos, se imprimirá una tabla con las estadísticas finales de cada proceso, detallando los tiempos de finalización, retorno y espera, junto con el rendimiento del sistema medido en procesos por unidad de tiempo.
-* **En el visualizador web (Opción 4):** Se utilizan los selectores superiores de la "Línea temporal" o el botón "Siguiente" para recorrer gráficamente cada instante de tiempo. Esto te permite visualizar la barra de memoria dinámica, los procesos bloqueados por fragmentación externa, el cambio de contexto en la CPU y los movimientos precisos entre las colas de Nuevos, Listos, Suspendidos y Terminados.
+* **En el visualizador web (Opción 4):** Se utilizan los selectores superiores de la "Línea temporal" o el botón "Siguiente" para recorrer gráficamente cada instante de tiempo. Esto te permite visualizar la barra de memoria dinámica, los procesos bloqueados por fragmentación externa, el cambio de contexto en la CPU y los movimientos precisos entre las colas de Nuevos, Listos, Suspendidos y Terminados.*
+  
+# Link de Trello 
+https://trello.com/invite/b/6abc0e7b989dd5e8ae83230b/ATTId432d6dd9c2b6749da9f8224e277ae877D87C0D7/juntafa-pitagorica
