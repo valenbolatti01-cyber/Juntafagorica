@@ -1,0 +1,41 @@
+ESCENARIOS DE PRUEBA - SIMULADOR MVT + SRTF
+
+Formato CSV: id,tamanio,arribo,irrupcion
+Tamanios expresados en K. Memoria de usuario: 450K (SO: 100K).
+
+01 - BASICO SRTF
+Llegada de procesos durante la ejecución y cambio de CPU cuando llega uno
+con menor tiempo restante.
+
+02 - EMPATE SRTF
+Dos procesos pueden tener el mismo tiempo restante. Permite comprobar cómo
+se resuelve el empate y si se conserva el proceso que llegó primero.
+
+03 - CPU LIBRE
+Hay intervalos sin procesos listos. La CPU debe quedar libre hasta el próximo
+arribo.
+
+04 - ARRIBOS SIMULTANEOS
+Varios procesos llegan en el mismo instante. Permite observar el orden de
+admisión y la selección SRTF.
+
+05 - SUSPENSION POR MEMORIA
+P1 ocupa 300K. P2 necesita 200K y no entra mientras P1 siga ocupando memoria.
+P3 permite observar otro intento de admisión y la reanudación de suspendidos.
+
+06 - FRAGMENTACION EXTERNA
+P1 y P3 terminan primero y dejan huecos separados por P2 y P4. Cuando llega
+P5, hay 250K libres en total, pero ningún hueco individual de 150K.
+
+07 - REUTILIZACION DE MEMORIA / BEST-FIT
+Los procesos terminan en distintos momentos. P6 llega después de que se
+liberaron bloques y permite observar la reutilización de huecos.
+
+08 - LIMITE DE CINCO ACTIVOS
+Seis procesos llegan en un intervalo corto. Sirve para comprobar el límite
+de cinco procesos activos. Según la implementación, P6 puede permanecer en
+Nuevo hasta que haya lugar; no necesariamente pasa a Listo y Suspendido.
+
+CONSEJO
+Cargá cada CSV por separado desde la opción 1. Después probá las opciones
+2 (consola) y 3 (HTML) para comparar los eventos.
