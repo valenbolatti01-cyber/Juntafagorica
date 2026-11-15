@@ -556,6 +556,22 @@ def menu():
 
 
 if __name__ == "__main__":
+    print(
+    "TPI Sistemas Operativos 2026: Simulador de Procesos \n \n"
+    "Equipo de Trabajo: \n" 
+    "   Aguirre Agustina \n" 
+    "   Barriento Marcos \n" 
+    "   Bolatti Valentino \n" 
+    "   Hernandez Mateo \n" 
+    "   Lopez Barbosa Matias \n" 
+    "   Rodriguez Maria Florencia \n" 
+    "   Vicentín Francisco \n \n"
+    "Profesores: \n" 
+    "   Cuenca Pletsch Liliana \n" 
+    "   Gramajo Sergio \n" 
+    "   Roa Jorge \n" 
+    "   Vigil Rodrigo \n"
+    )
     try:
         menu()
     except (KeyboardInterrupt, EOFError):
